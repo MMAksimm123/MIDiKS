@@ -1,0 +1,21 @@
+.containerHome {
+    height: 664px;
+}
+
+.btnStudent {
+    background: #fc4c00;
+    color: white;
+}
+
+.btnStudentHover {
+    background: #d14103;
+}
+
+.btnEmployer {
+    border: #fc4c00 1px solid;
+    color: #fc4c00;
+}
+
+.btnEmployerHover {
+    background: #d3d3d3;
+}
