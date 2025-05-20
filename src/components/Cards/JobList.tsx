@@ -69,7 +69,8 @@ const JobList:React.FC<JobListProps> = ({searchQuery = ""}) => {
           title={job.company_name}
           style={{marginBottom: '12px'}}
           actions={
-            <ContentJobCard vacancy={job.position}
+            <ContentJobCard id={job.id}
+              vacancy={job.position}
               workExperience={job.work_experience}
               employmentType={job.type_employment}
             />

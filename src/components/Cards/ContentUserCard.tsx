@@ -5,16 +5,17 @@ import bridge from "@vkontakte/vk-bridge";
 import { supabase } from "../../database/supabaseClient";
 
 type StudentContentProp = {
-    id: string; // Добавляем id карточки
-    vacancy: string;
+    id: string;
     workExperience: string;
     lastPlaceOfEmployment: string;
-    employmentType: string;
+    vacancy?: string;
+    employmentType?: string;
 }
 
 const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperience, lastPlaceOfEmployment, employmentType}) => {
     const [isFavorite, setIsFavorite] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [inviteStatus, setInviteStatus] = useState<'idle' | 'loading' | 'sent'>('idle');
 
     useEffect(() => {
         const checkFavoriteStatus = async () => {
@@ -22,18 +23,26 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
                 const user = await bridge.send('VKWebAppGetUserInfo');
                 const vkId = user.id;
 
-                const { data, error } = await supabase
+                // Проверяем статус избранного
+                const { data: favoriteData } = await supabase
                     .from('Favourites')
                     .select('*')
                     .eq('id_user', vkId)
                     .eq('id_card_favoriterite', id)
                     .single();
 
-                if (data) {
-                    setIsFavorite(true);
-                }
+                // Проверяем статус приглашения
+                const { data: invitationData } = await supabase
+                    .from('Invitations')
+                    .select('*')
+                    .eq('id_vk_employear', vkId)
+                    .eq('id_card', id)
+                    .single();
+
+                setIsFavorite(!!favoriteData);
+                setInviteStatus(invitationData ? 'sent' : 'idle');
             } catch (error) {
-                console.error('Error checking favorite status:', error);
+                console.error('Error checking statuses:', error);
             }
         };
 
@@ -47,7 +56,6 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
             const vkId = user.id;
 
             if (isFavorite) {
-                // Удаляем из избранного
                 const { error } = await supabase
                     .from('Favourites')
                     .delete()
@@ -58,7 +66,6 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
                     setIsFavorite(false);
                 }
             } else {
-                // Добавляем в избранное
                 const { error } = await supabase
                     .from('Favourites')
                     .insert([
@@ -76,6 +83,56 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
             console.error('Error handling favorite:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleInviteClick = async () => {
+        try {
+            setInviteStatus('loading');
+            const user = await bridge.send('VKWebAppGetUserInfo');
+            const vkEmployerId = user.id;
+
+            // Получаем данные студента
+            const { data: studentData, error: studentError } = await supabase
+                .from('Students')
+                .select('id_vk_student')
+                .eq('id', id)
+                .single();
+
+            if (studentError || !studentData) {
+                throw studentError || new Error('Student not found');
+            }
+
+            // Отправляем приглашение
+            const { error: inviteError } = await supabase
+                .from('Invitations')
+                .insert([
+                    {
+                        id_vk_employear: vkEmployerId,
+                        id_vk_student: studentData.id_vk_student,
+                        id_card: id
+                    }
+                ]);
+
+            if (inviteError) {
+                throw inviteError;
+            }
+
+            setInviteStatus('sent');
+        } catch (error) {
+            console.error('Error sending invitation:', error);
+            setInviteStatus('idle');
+        }
+    };
+
+    const getInviteButtonText = () => {
+        switch (inviteStatus) {
+            case 'loading':
+                return 'Отправка...';
+            case 'sent':
+                return 'Приглашение отправлено';
+            default:
+                return 'Пригласить';
         }
     };
 
@@ -103,8 +160,10 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
                     className='btnStudent' 
                     hoverClassName='btnStudentHover' 
                     mode="secondary"
+                    onClick={handleInviteClick}
+                    disabled={inviteStatus !== 'idle'}
                 >
-                    Пригласить
+                    {getInviteButtonText()}
                 </Button>
             </ButtonGroup>
         </>

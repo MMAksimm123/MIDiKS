@@ -9,7 +9,7 @@ type TabBarProps = {
 
 const TabBar:React.FC<TabBarProps> = ({ activeStory, onStoryChange }) => {
     return (
-        <div >
+        <div>
             <div style={{ maxWidth: 768, margin: 'auto' }}>
                 <Tabbar>
                     <TabbarItem 

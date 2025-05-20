@@ -48,7 +48,7 @@ const UserList: React.FC<UserListProps> = ({searchQuery = "" }) => {
   }, []);
 
   const filteredUsers = users.filter(user => 
-    user.student_vacancy.toLowerCase().includes(searchQuery.toLowerCase())
+    (user.student_vacancy || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {

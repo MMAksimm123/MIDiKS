@@ -32,10 +32,13 @@ const CardUser: React.FC<ContentCard> = ({ idVkStudent, urlPhoto,
           subtitle={specialization}
           style={{ marginBottom: '12px' }} // Добавляем отступ между баннерами
           actions={
-            <ContentUserCard vacancy={studentVacancy} 
+            <ContentUserCard 
+              id={''}
+              vacancy={studentVacancy} 
               workExperience={studentWorkExpiriency}
               lastPlaceOfEmployment={studentLastPlaceEmployment} 
-              employmentType={studentEmploymentType}/>
+              employmentType={studentEmploymentType}
+            />
           }
         />
   );

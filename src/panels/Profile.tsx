@@ -27,7 +27,6 @@ type UserData = {
 
 type EmployerData = {
     vk_id: string;
-    // другие поля из таблицы Employers
     company_name?: string;
     company_description?: string;
     link_company?: string;
@@ -113,38 +112,57 @@ export const Profile: FC<ProfileProps> = ({id, onStoryChange}) => {
                 <Spacing size="4xl" />
                 
                 {userData && (
-                    <CardUser
-                        idVkStudent={userData.vk_id}
-                        urlPhoto={userData.urlPhoto || ''}
-                        name={userData.name || ''}
-                        specialization={userData.specialization || ''}
-                        studentVacancy={userData.studentVacancy || ''}
-                        studentWorkExpiriency={userData.studentWorkExpiriency || ''}
-                        studentLastPlaceEmployment={userData.studentLastPlaceEmployment || ''}
-                        studentEmploymentType={userData.studentEmploymentType || ''}
-                    />
+                    <Div>
+                        <CardUser
+                            idVkStudent={userData.vk_id}
+                            urlPhoto={userData.urlPhoto || ''}
+                            name={userData.name || ''}
+                            specialization={userData.specialization || ''}
+                            studentVacancy={userData.studentVacancy || ''}
+                            studentWorkExpiriency={userData.studentWorkExpiriency || ''}
+                            studentLastPlaceEmployment={userData.studentLastPlaceEmployment || ''}
+                            studentEmploymentType={userData.studentEmploymentType || ''}
+                        />
+                        <Spacing size="xl" />
+                        <Button
+                            className='btnStudent'                             
+                            stretched 
+                            mode="secondary"
+                            size="l"
+                            hoverClassName='btnStudentHover'
+                        >
+                            Редактировать профиль 
+                        </Button>
+                        <Spacing size="xl" />
+                        <Spacing size="xl" />
+                    </Div>
                 )}
             </>
             {employerData && (
-                <>
+                <Div>
                     <CardEmployer
                         nameCompany={employerData.company_name || ''}
                         companyDescription={employerData.company_description || ''}
                         companyLink={employerData.link_company || ''}
                     />
                     <Spacing size="4xl" />
-                    <Button>Редактировать профиль </Button>
+                    <Button className='btnStudent'                             
+                        stretched 
+                        mode="secondary"
+                        size="l"
+                        hoverClassName='btnStudentHover'
+                    >
+                        Редактировать профиль 
+                    </Button>
                     <Spacing size="4xl" />
                     <Spacing size="4xl" />
-                        
-                    {/* Удаляем кнопку из основного потока и помещаем в FixedLayout */}
-                </>
+                </Div>
             )}
 
             {employerData && (
                 <FixedLayout vertical="bottom" filled>
                     <Div style={{
-                        paddingBottom: 60, // Отступ для TabBar
+                        paddingBottom: 60,
                         backgroundColor: 'var(--vkui--color_background_content)'
                     }}>
                         <Button 
