@@ -1,7 +1,7 @@
 import bridge from "@vkontakte/vk-bridge";
 import { useEffect, useState } from "react";
 import { supabase } from "../../database/supabaseClient";
-import { Avatar, Banner, Spacing, Spinner, Text } from "@vkontakte/vkui";
+import { Avatar, Banner, Separator, Spacing, Spinner, Text } from "@vkontakte/vkui";
 import ContentUserCard from "../Cards/ContentUserCard";
 
 interface StudentFeedback {
@@ -119,7 +119,9 @@ const FeedbackComponent = () => {
     return (
         <div style={{ padding: "16px" }}>
             {feedbacks.map((feedback) => (
-                <div key={feedback.id} style={{border: '2px solid black', borderRadius: '20px', padding: '10px', marginBottom: '10px'}}>
+                <div key={feedback.id}>
+                    <Separator appearance="primary" />
+                    <Spacing size="xl" />
                     <Text>Отклик на вакансию: {feedback.position}, {feedback.work_experience}, {feedback.work_format}, {feedback.type_employment}</Text>
                     <Spacing size="xl" />
                     <Banner 
@@ -143,6 +145,7 @@ const FeedbackComponent = () => {
                             />
                         }
                     />
+                    <Spacing size='xl' />
                 </div>
             ))}
         </div>

@@ -24,6 +24,9 @@ export const DEFAULT_VIEW_PANELS = {
   FEEDBACK: 'feedback',
   NOTIFICATIONS: 'notifications',
   JOBCREATION: 'jobcreation',
+  EDITINGEMPLOYERPROFILE: 'editingemployerprofile',
+  EDITINGSTUDENTPROFILE: 'editingstudentprofile',
+  SUMMARYCREATION: 'summarycreation',
 };
 
 export const routes = RoutesConfig.create([
@@ -42,6 +45,9 @@ export const routes = RoutesConfig.create([
       createPanel(DEFAULT_VIEW_PANELS.FEEDBACK, `/${DEFAULT_VIEW_PANELS.FEEDBACK}`, []),
       createPanel(DEFAULT_VIEW_PANELS.NOTIFICATIONS, `/${DEFAULT_VIEW_PANELS.NOTIFICATIONS}`, []),
       createPanel(DEFAULT_VIEW_PANELS.JOBCREATION, `/${DEFAULT_VIEW_PANELS.JOBCREATION}`, []),
+      createPanel(DEFAULT_VIEW_PANELS.EDITINGEMPLOYERPROFILE, `/${DEFAULT_VIEW_PANELS.EDITINGEMPLOYERPROFILE}`, []),
+      createPanel(DEFAULT_VIEW_PANELS.EDITINGSTUDENTPROFILE, `/${DEFAULT_VIEW_PANELS.EDITINGSTUDENTPROFILE}`, []),
+      createPanel(DEFAULT_VIEW_PANELS.SUMMARYCREATION, `/${DEFAULT_VIEW_PANELS.SUMMARYCREATION}`, []),
     ]),
   ]),
 ]);

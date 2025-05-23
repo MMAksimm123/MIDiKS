@@ -6,10 +6,10 @@ import ContentUserCard from "./ContentUserCard";
 export type User = {
   id: string;
   id_vk_student: string;
-  full_name_student: string;
+  name_student: string;
   specialization_of_study: string;
-  url_vk_student_photo: string;
-  student_vacancy: string;
+  url_photo_student: string;
+  vacancies: string;
   student_work_experience: string;
   student_last_place_of_employment: string;
   student_employment_type: string;
@@ -29,7 +29,7 @@ const UserList: React.FC<UserListProps> = ({searchQuery = "" }) => {
       try {
         setLoading(true);
         const { data, error: supabaseError } = await supabase
-          .from("Students")
+          .from("Summary")
           .select("*");
 
         if (supabaseError) throw supabaseError;
@@ -48,7 +48,7 @@ const UserList: React.FC<UserListProps> = ({searchQuery = "" }) => {
   }, []);
 
   const filteredUsers = users.filter(user => 
-    (user.student_vacancy || '').toLowerCase().includes(searchQuery.toLowerCase())
+    (user.vacancies || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
@@ -67,18 +67,18 @@ const UserList: React.FC<UserListProps> = ({searchQuery = "" }) => {
           before={
             <Avatar 
               size={48} 
-              src={user.url_vk_student_photo} 
-              alt={user.full_name_student}
-              onError={() => console.error("Failed to load avatar for", user.full_name_student)}
+              src={user.url_photo_student} 
+              alt={user.name_student}
+              onError={() => console.error("Failed to load avatar for", user.name_student)}
             />
           }
-          title={user.full_name_student}
+          title={user.name_student}
           subtitle={user.specialization_of_study}
           style={{ marginBottom: '12px' }}
           actions={
             <ContentUserCard 
               id={user.id} // Передаем id карточки
-              vacancy={user.student_vacancy} 
+              vacancy={user.vacancies} 
               workExperience={user.student_work_experience}
               lastPlaceOfEmployment={user.student_last_place_of_employment} 
               employmentType={user.student_employment_type}

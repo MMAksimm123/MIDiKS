@@ -13,6 +13,9 @@ import { MainScreen } from './panels/MainScreen';
 import { StudentLogining } from './panels/StudentLogining';
 import { Notifications } from './panels/Notifications';
 import { JobCreation } from './panels/JobCreation';
+import { EditingEmployerProfile } from './panels/EditingEmployerProfile';
+import { EditingStudentProfile } from './panels/EditingStudentProfile';
+import { SummaryCreation } from './panels/SummaryCreation';
 
 export const App = () => {
   const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
@@ -45,11 +48,14 @@ export const App = () => {
           <EmployerRegistration id='employerregistrtion' />
           <EmployerLoggining id='logginingemployer' />
           <StudentLogining id='logginingstudent' />
+          <EditingEmployerProfile id='editingemployerprofile' />
+          <EditingStudentProfile id='editingstudentprofile' />
           <MainScreen id='mainscreen' onStoryChange={onStoryChange}/>
           <Profile id='profile' onStoryChange={onStoryChange}/>
           <Feedback id='feedback' onStoryChange={onStoryChange} />
           <Notifications id='notifications' onStoryChange={onStoryChange} />
           <JobCreation id='jobcreation' onStoryChange={onStoryChange}/>
+          <SummaryCreation id='summarycreation' onStoryChange={onStoryChange} />
         </View>
       </SplitCol>
       {popout}

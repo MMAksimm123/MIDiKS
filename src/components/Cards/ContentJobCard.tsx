@@ -163,7 +163,7 @@ const ContentJobCard:React.FC<JobContentProp> = ({id, vacancy, workExperience, e
           onClick={handleFavoriteClick}
           disabled={loading}
         >
-          {isFavorite ? <Icon24Like /> : <Icon24LikeOutline />}
+          {isFavorite ? <Icon24Like fill="#fc4c00"/> : <Icon24LikeOutline fill="#fc4c00"/>}
         </Button>
         <Button 
           className='btnStudent' 

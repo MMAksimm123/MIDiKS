@@ -3,10 +3,10 @@ import { FC, useEffect, useState } from "react";
 import TabBar from "../components/TabBar/TabBar";
 import bridge from "@vkontakte/vk-bridge";
 import { supabase } from "../database/supabaseClient";
-import CardUser from "../components/Cards/CardUser";
 import CardEmployer from "../components/Cards/CardEmployer";
 import { Icon24Add } from "@vkontakte/icons";
 import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router";
+import StudentProfileCard from "../components/Cards/ProfileCard/StudentProfileCard";
 
 type ProfileProps = {
     id: string;
@@ -14,19 +14,19 @@ type ProfileProps = {
 }
 
 type UserData = {
-    vk_id: string;
+    vk_id: number;
     // другие поля из таблицы Students
-    urlPhoto?: string;
-    name?: string;
-    specialization?: string;
-    studentVacancy?: string;
-    studentWorkExpiriency?: string;
-    studentLastPlaceEmployment?: string;
-    studentEmploymentType?: string;
+    url_vk_student_photo?: string;
+    full_name_student?: string;
+    specialization_of_study?: string;
+    student_vacancy?: string;
+    student_work_experience?: string;
+    student_last_place_of_employment?: string;
+    student_employment_type?: string;
 }
 
 type EmployerData = {
-    vk_id: string;
+    vk_id: number;
     company_name?: string;
     company_description?: string;
     link_company?: string;
@@ -38,8 +38,15 @@ export const Profile: FC<ProfileProps> = ({id, onStoryChange}) => {
     const [employerData, setEmployerData] = useState<EmployerData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    
     const routeNavigator = useRouteNavigator();
+
+    const handleSubmit = async () => {
+        routeNavigator.push('/editingemployerprofile');
+    }
+
+    const handleSubmitStudent = async () => {
+        routeNavigator.push('/editingstudentprofile');
+    }
 
     useEffect(() => {
         const fetchUserInfo = async () => {
@@ -113,16 +120,17 @@ export const Profile: FC<ProfileProps> = ({id, onStoryChange}) => {
                 
                 {userData && (
                     <Div>
-                        <CardUser
-                            idVkStudent={userData.vk_id}
-                            urlPhoto={userData.urlPhoto || ''}
-                            name={userData.name || ''}
-                            specialization={userData.specialization || ''}
-                            studentVacancy={userData.studentVacancy || ''}
-                            studentWorkExpiriency={userData.studentWorkExpiriency || ''}
-                            studentLastPlaceEmployment={userData.studentLastPlaceEmployment || ''}
-                            studentEmploymentType={userData.studentEmploymentType || ''}
+                        <StudentProfileCard
+                            idVkStudent={userId.toString()}
+                            name={userData.full_name_student || ''}
+                            specialization={userData.specialization_of_study || ''}
+                            studentEmploymentType={userData.student_employment_type || ''}
+                            studentLastPlaceEmployment={userData.student_last_place_of_employment || ''}
+                            studentVacancy={userData.student_vacancy || ''}
+                            studentWorkExpiriency={userData.student_work_experience || ''}
+                            urlPhoto={userData.url_vk_student_photo || ''}
                         />
+
                         <Spacing size="xl" />
                         <Button
                             className='btnStudent'                             
@@ -130,12 +138,42 @@ export const Profile: FC<ProfileProps> = ({id, onStoryChange}) => {
                             mode="secondary"
                             size="l"
                             hoverClassName='btnStudentHover'
+                            onClick={handleSubmitStudent}
                         >
                             Редактировать профиль 
                         </Button>
                         <Spacing size="xl" />
                         <Spacing size="xl" />
                     </Div>
+                )}
+
+                {userData && (
+                    <FixedLayout vertical="bottom" filled>
+                    <Div style={{
+                        paddingBottom: 60,
+                        backgroundColor: 'var(--vkui--color_background_content)'
+                    }}>
+                        <Button 
+                            className='btnStudent' 
+                            stretched 
+                            mode="secondary" 
+                            size="l" 
+                            hoverClassName='btnStudentHover'
+                            onClick={() => routeNavigator.push('/summarycreation')}
+                        >
+                            <Div style={{
+                                display: 'flex',  
+                                justifyContent: 'center', 
+                                alignItems: 'center', 
+                                gap: '10px'
+                            }}>
+                                <Icon24Add />
+                                Создать резюме
+                            </Div>
+                        </Button>
+                    </Div>
+                    <TabBar activeStory="profile" onStoryChange={onStoryChange} />
+                </FixedLayout>
                 )}
             </>
             {employerData && (
@@ -151,8 +189,9 @@ export const Profile: FC<ProfileProps> = ({id, onStoryChange}) => {
                         mode="secondary"
                         size="l"
                         hoverClassName='btnStudentHover'
+                        onClick={handleSubmit}
                     >
-                        Редактировать профиль 
+                        Редактировать профиль
                     </Button>
                     <Spacing size="4xl" />
                     <Spacing size="4xl" />

@@ -11,5 +11,8 @@ export {Profile} from './Profile';
 export {Feedback} from './Feedback';
 export {Notifications} from './Notifications';
 export {JobCreation} from './JobCreation';
+export {EditingEmployerProfile} from './EditingEmployerProfile';
+export {EditingStudentProfile} from './EditingStudentProfile';
+export {SummaryCreation} from './SummaryCreation';
  
 export type { HomeProps } from './Home';

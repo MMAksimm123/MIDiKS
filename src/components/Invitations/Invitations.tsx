@@ -6,10 +6,10 @@ import { supabase } from "../../database/supabaseClient";
 
 interface Student {
   id: string;
-  full_name_student: string;
-  url_vk_student_photo: string;
+  name_student: string;
+  url_photo_student: string;
   specialization_of_study: string;
-  student_vacancy: string;
+  vacancies: string;
   student_work_experience: string;
   student_last_place_of_employment: string;
   student_employment_type: string;
@@ -47,7 +47,7 @@ const Invitations = () => {
 
         // Получаем данные студентов по этим карточкам
         const { data: studentsData, error: studentsError } = await supabase
-          .from('Students')
+          .from('Summary')
           .select('*')
           .in('id', cardIds);
 
@@ -87,17 +87,17 @@ const Invitations = () => {
           before={
             <Avatar
               size={48}
-              src={invitation.url_vk_student_photo}
-              alt={invitation.full_name_student}
+              src={invitation.url_photo_student}
+              alt={invitation.name_student}
             />
           }
-          title={invitation.full_name_student}
+          title={invitation.name_student}
           subtitle={invitation.specialization_of_study}
           style={{ marginBottom: "12px" }}
           actions={
             <ContentUserCard
               id={invitation.id}
-              vacancy={invitation.student_vacancy}
+              vacancy={invitation.vacancies}
               workExperience={invitation.student_work_experience}
               lastPlaceOfEmployment={invitation.student_last_place_of_employment}
               employmentType={invitation.student_employment_type}   

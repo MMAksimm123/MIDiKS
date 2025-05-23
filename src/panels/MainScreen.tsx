@@ -9,7 +9,6 @@ import JobList from "../components/Cards/JobList";
 import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router";
 import bridge from "@vkontakte/vk-bridge";
 import { supabase } from "../database/supabaseClient";
- // Импортируйте настроенный клиент Supabase
 
 type MainScreenProps = {
     id: string;
