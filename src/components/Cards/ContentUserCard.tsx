@@ -10,9 +10,10 @@ type StudentContentProp = {
     lastPlaceOfEmployment: string;
     vacancy?: string;
     employmentType?: string;
+    onActionClick?: (e: React.MouseEvent) => void;
 }
 
-const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperience, lastPlaceOfEmployment, employmentType}) => {
+const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperience, lastPlaceOfEmployment, employmentType, onActionClick}) => {
     const [isFavorite, setIsFavorite] = useState(false);
     const [loading, setLoading] = useState(false);
     const [inviteStatus, setInviteStatus] = useState<'idle' | 'loading' | 'sent'>('idle');
@@ -49,7 +50,9 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
         checkFavoriteStatus();
     }, [id]);
 
-    const handleFavoriteClick = async () => {
+    const handleFavoriteClick = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onActionClick) onActionClick(e);
         try {
             setLoading(true);
             const user = await bridge.send('VKWebAppGetUserInfo');
@@ -86,7 +89,9 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
         }
     };
 
-    const handleInviteClick = async () => {
+    const handleInviteClick = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onActionClick) onActionClick(e);
         try {
             setInviteStatus('loading');
             const user = await bridge.send('VKWebAppGetUserInfo');
@@ -154,7 +159,7 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
                     onClick={handleFavoriteClick}
                     disabled={loading}
                 >
-                    {isFavorite ? <Icon24Like /> : <Icon24LikeOutline />}
+                    {isFavorite ? <Icon24Like fill="#fc4c00"/> : <Icon24LikeOutline fill="#fc4c00"/>}
                 </Button>
                 <Button 
                     className='btnStudent' 

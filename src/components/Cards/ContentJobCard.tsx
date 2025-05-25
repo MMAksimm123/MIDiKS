@@ -9,9 +9,10 @@ type JobContentProp = {
   vacancy: string;
   workExperience: string;
   employmentType: string;
+  onActionClick?: (e: React.MouseEvent) => void;
 }
 
-const ContentJobCard:React.FC<JobContentProp> = ({id, vacancy, workExperience, employmentType}) => {
+const ContentJobCard:React.FC<JobContentProp> = ({id, vacancy, workExperience, employmentType, onActionClick}) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [hasFeedback, setHasFeedback] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -50,7 +51,10 @@ const ContentJobCard:React.FC<JobContentProp> = ({id, vacancy, workExperience, e
     checkStatuses();
   }, [id]);
 
-  const handleFavoriteClick = async () => {
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onActionClick) onActionClick(e);
+    
     try {
       setLoading(true);
       const user = await bridge.send('VKWebAppGetUserInfo');
@@ -87,7 +91,10 @@ const ContentJobCard:React.FC<JobContentProp> = ({id, vacancy, workExperience, e
     }
   };
 
-  const handleFeedbackClick = async () => {
+  const handleFeedbackClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onActionClick) onActionClick(e);
+    
     try {
       setFeedbackLoading(true);
       const user = await bridge.send('VKWebAppGetUserInfo');

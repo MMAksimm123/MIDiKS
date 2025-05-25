@@ -1,6 +1,7 @@
-import { FixedLayout, Panel, PanelHeader, Title } from "@vkontakte/vkui";
+import { Div, FixedLayout, Panel, PanelHeader, Title } from "@vkontakte/vkui";
 import React from "react";
 import TabBar from "../components/TabBar/TabBar";
+import Notices from "../components/Notices/Notices";
 
 type ScreenProps = {
     id: string;
@@ -13,6 +14,10 @@ export const Notifications:React.FC<ScreenProps> = ({id, onStoryChange}) => {
             <PanelHeader>
                 <Title>Уведомления</Title>
             </PanelHeader>
+
+            <Div>
+                <Notices />
+            </Div>
 
             <FixedLayout vertical="bottom">
                 <TabBar activeStory="notifications" onStoryChange={onStoryChange}/>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../database/supabaseClient";
 import { Banner, ScreenSpinner } from "@vkontakte/vkui";
 import ContentJobCard from "./ContentJobCard";
+import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router";
 
 export type Job = {
   id: string;
@@ -20,6 +21,8 @@ const JobList:React.FC<JobListProps> = ({searchQuery = ""}) => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const routeNavigator = useRouteNavigator();
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -66,6 +69,10 @@ const JobList:React.FC<JobListProps> = ({searchQuery = ""}) => {
       {filteredJobs.map((job) => (
         <Banner
           key={job.id}
+          onClick={() => {
+            console.log('User ID to navigate:', job.id); // Добавьте лог
+            routeNavigator.push(`/employervacances`);
+          }}
           title={job.company_name}
           style={{marginBottom: '12px'}}
           actions={

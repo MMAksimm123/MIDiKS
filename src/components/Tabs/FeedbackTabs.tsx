@@ -14,7 +14,7 @@ const FeedbackTabs = ({ onTabChange }: FeedbackTabsProps) => {
   };
 
   return (
-    <Tabs layoutFillMode="stretched">
+    <Tabs layoutFillMode="stretched" mode="default">
       <TabsItem
         selected={selected === "feedback"}
         onClick={() => handleTabChange("feedback")}

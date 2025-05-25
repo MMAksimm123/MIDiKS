@@ -14,5 +14,7 @@ export {JobCreation} from './JobCreation';
 export {EditingEmployerProfile} from './EditingEmployerProfile';
 export {EditingStudentProfile} from './EditingStudentProfile';
 export {SummaryCreation} from './SummaryCreation';
- 
+export {StudentSummary} from './StudentSummary';
+export {EmployerVacances} from './EmployerVacances';
+
 export type { HomeProps } from './Home';

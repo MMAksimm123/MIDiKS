@@ -88,9 +88,9 @@ export const Feedback: React.FC<ScreenProps> = ({id, onStoryChange}) => {
                     </Div>
                 );
             case "favorites":
-                if (loading) {
-                    return <Div>Загрузка...</Div>;
-                }
+                // if (loading) {
+                //     return <Div>Загрузка...</Div>;
+                // }
                 
                 return (
                     <Div style={{ padding: "16px" }}>
