@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Banner, ScreenSpinner } from "@vkontakte/vkui";
 import { supabase } from "../../database/supabaseClient";
-import ContentUserCard from "./ContentUserCard";
 import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router";
+import ContentUserCard from "./ContentUserCard";
 
 export type User = {
   id: string;

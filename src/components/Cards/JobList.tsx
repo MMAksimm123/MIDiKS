@@ -17,7 +17,7 @@ interface JobListProps {
   searchQuery?: string;
 }
 
-const JobList:React.FC<JobListProps> = ({searchQuery = ""}) => {
+const JobList: React.FC<JobListProps> = ({ searchQuery = "" }) => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +29,7 @@ const JobList:React.FC<JobListProps> = ({searchQuery = ""}) => {
       try {
         setLoading(true);
 
-        const {data, error: supabaseError} = await supabase
+        const { data, error: supabaseError } = await supabase
           .from("Vacancies")
           .select("*");
 
@@ -53,7 +53,7 @@ const JobList:React.FC<JobListProps> = ({searchQuery = ""}) => {
   }, [jobs]);
 
   const filteredJobs = jobs.filter(user => 
-      user.position.toLowerCase().includes(searchQuery.toLowerCase())
+    user.position.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
@@ -65,18 +65,19 @@ const JobList:React.FC<JobListProps> = ({searchQuery = ""}) => {
   if (jobs.length === 0) return <div>Вакансии не найдены</div>
 
   return (
-    <div style={{padding: '16px'}}>
+    <div style={{ padding: '16px' }}>
       {filteredJobs.map((job) => (
         <Banner
           key={job.id}
           onClick={() => {
-            console.log('User ID to navigate:', job.id); // Добавьте лог
+            console.log('User ID to navigate:', job.id);
             routeNavigator.push(`/employervacances`);
           }}
           title={job.company_name}
-          style={{marginBottom: '12px'}}
+          style={{ marginBottom: '12px' }}
           actions={
-            <ContentJobCard id={job.id}
+            <ContentJobCard 
+              id={job.id}
               vacancy={job.position}
               workExperience={job.work_experience}
               employmentType={job.type_employment}

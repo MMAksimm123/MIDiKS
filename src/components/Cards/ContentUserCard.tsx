@@ -90,45 +90,72 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
     };
 
     const handleInviteClick = async (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (onActionClick) onActionClick(e);
-        try {
-            setInviteStatus('loading');
-            const user = await bridge.send('VKWebAppGetUserInfo');
-            const vkEmployerId = user.id;
+    e.stopPropagation();
+    if (onActionClick) onActionClick(e);
+    try {
+        setInviteStatus('loading');
+        const user = await bridge.send('VKWebAppGetUserInfo');
+        const vkEmployerId = user.id;
 
-            // Получаем данные студента
-            const { data: studentData, error: studentError } = await supabase
-                .from('Students')
-                .select('id_vk_student')
-                .eq('id', id)
-                .single();
+        // Получаем данные студента
+        const { data: studentData, error: studentError } = await supabase
+            .from('Summary')
+            .select('vk_id_student, vacancies')
+            .eq('id', id)
+            .single();
 
-            if (studentError || !studentData) {
-                throw studentError || new Error('Student not found');
-            }
-
-            // Отправляем приглашение
-            const { error: inviteError } = await supabase
-                .from('Invitations')
-                .insert([
-                    {
-                        id_vk_employear: vkEmployerId,
-                        id_vk_student: studentData.id_vk_student,
-                        id_card: id
-                    }
-                ]);
-
-            if (inviteError) {
-                throw inviteError;
-            }
-
-            setInviteStatus('sent');
-        } catch (error) {
-            console.error('Error sending invitation:', error);
-            setInviteStatus('idle');
+        if (studentError || !studentData) {
+            throw studentError || new Error('Student not found');
         }
-    };
+
+        // Получаем данные работодателя
+        const { data: employerData, error: employerError } = await supabase
+            .from('Employers')
+            .select('company_name')
+            .eq('id_vk_employer', vkEmployerId)
+            .single();
+
+        if (employerError || !employerData) {
+            throw employerError || new Error('Employer not found');
+        }
+
+        // Отправляем приглашение
+        const { error: inviteError } = await supabase
+            .from('Invitations')
+            .insert([
+                {
+                    id_vk_employear: vkEmployerId,
+                    id_vk_student: studentData.vk_id_student,
+                    id_card: id
+                }
+            ]);
+
+        if (inviteError) {
+            throw inviteError;
+        }
+
+        // Создаем уведомление
+        const { error: noticeError } = await supabase
+            .from('Notices_Student')
+            .insert([
+                {
+                    vk_id_student: studentData.vk_id_student,
+                    vk_id_employer: vkEmployerId,
+                    id_card: id,
+                    reviewed: false,
+                }
+            ]);
+
+        if (noticeError) {
+            throw noticeError;
+        }
+
+        setInviteStatus('sent');
+    } catch (error) {
+        console.error('Error sending invitation:', error);
+        setInviteStatus('idle');
+    }
+};
 
     const getInviteButtonText = () => {
         switch (inviteStatus) {

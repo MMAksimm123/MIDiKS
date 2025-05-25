@@ -12,7 +12,7 @@ type JobContentProp = {
   onActionClick?: (e: React.MouseEvent) => void;
 }
 
-const ContentJobCard:React.FC<JobContentProp> = ({id, vacancy, workExperience, employmentType, onActionClick}) => {
+const ContentJobCard: React.FC<JobContentProp> = ({ id, vacancy, workExperience, employmentType, onActionClick }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [hasFeedback, setHasFeedback] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -121,6 +121,22 @@ const ContentJobCard:React.FC<JobContentProp> = ({id, vacancy, workExperience, e
 
         if (vacancyError || !vacancyData) {
           throw new Error(vacancyError?.message || 'Vacancy not found');
+        }
+
+        // Добавляем запись в таблицу Notices
+        const { error: noticeError } = await supabase
+          .from('Notices')
+          .insert([
+            {
+              vk_id_student: vkIdStudent,
+              vk_id_employer: vacancyData.vk_id_employer,
+              id_card: id,
+              reviewed: false
+            }
+          ]);
+
+        if (noticeError) {
+          throw noticeError;
         }
 
         const { error: feedbackError } = await supabase
