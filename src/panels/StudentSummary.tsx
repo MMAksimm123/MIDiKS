@@ -1,5 +1,5 @@
 import { Icon28ArrowLeftOutline } from "@vkontakte/icons";
-import { Avatar, Div, NavIdProps, Panel, PanelHeaderButton, Title, Text, MiniInfoCell, Link, ScreenSpinner, Spacing, FixedLayout } from "@vkontakte/vkui";
+import { Avatar, Div, NavIdProps, Panel, PanelHeaderButton, Title, Text, MiniInfoCell, Link, ScreenSpinner, Spacing, FixedLayout, Button } from "@vkontakte/vkui";
 import React, { useEffect, useState } from "react";
 import { useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router";
 import { supabase } from "../database/supabaseClient";
@@ -146,7 +146,9 @@ export const StudentSummary: React.FC<NavIdProps> = ({ id }) => {
         </Div>
 
         <FixedLayout>
-        
+          <Button>
+            Пригласить
+          </Button>
         </FixedLayout>  
     </Panel>
   );

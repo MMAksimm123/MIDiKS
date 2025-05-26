@@ -71,7 +71,7 @@ const JobList: React.FC<JobListProps> = ({ searchQuery = "" }) => {
           key={job.id}
           onClick={() => {
             console.log('User ID to navigate:', job.id);
-            routeNavigator.push(`/employervacances`);
+            routeNavigator.push(`/employervacances/${job.id}`);
           }}
           title={job.company_name}
           style={{ marginBottom: '12px' }}

@@ -1,8 +1,9 @@
 import { Icon28ArrowLeftOutline } from "@vkontakte/icons";
 import { useParams, useRouteNavigator } from "@vkontakte/vk-mini-apps-router";
-import { Div, Link, MiniInfoCell, NavIdProps, Panel, PanelHeaderButton, Spacing, Text, Title } from "@vkontakte/vkui";
+import { Button, Div, FixedLayout, Link, MiniInfoCell, NavIdProps, Panel, PanelHeaderButton, ScreenSpinner, Spacing, Text, Title } from "@vkontakte/vkui";
 import React, { useEffect, useState } from "react";
 import { supabase } from "../database/supabaseClient";
+import bridge from "@vkontakte/vk-bridge";
 
 interface VacanciesData {
     id: string;
@@ -33,11 +34,16 @@ export const EmployerVacances: React.FC<NavIdProps> = ({id}) => {
     const [vacanciesData, setVacanciesData] = useState<VacanciesData | null>(null);
     const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
     const [loading, setLoading] = useState(true);
+    const [hasFeedback, setHasFeedback] = useState(false);
+    const [feedbackLoading, setFeedbackLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const user = await bridge.send('VKWebAppGetUserInfo');
+                const vkId = user.id;
+
                 setLoading(true);
                 
                 // Получаем данные о вакансии
@@ -62,6 +68,15 @@ export const EmployerVacances: React.FC<NavIdProps> = ({id}) => {
                 if (companyError) throw companyError;
                 setCompanyInfo(companyData);
 
+                const { data: feedbackData } = await supabase
+                    .from('Feedback')
+                    .select('*')
+                    .eq('id_vk_student', vkId)
+                    .eq('id_card_vacancie', id)
+                    .single();
+
+        setHasFeedback(!!feedbackData);
+
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError(err instanceof Error ? err.message : "Неизвестная ошибка");
@@ -76,7 +91,7 @@ export const EmployerVacances: React.FC<NavIdProps> = ({id}) => {
     }, [vacancyId]);
 
     if (loading) {
-        return <div>Загрузка...</div>;
+        return <ScreenSpinner />    
     }
 
     if (error) {
@@ -86,6 +101,77 @@ export const EmployerVacances: React.FC<NavIdProps> = ({id}) => {
     if (!vacanciesData) {
         return <div>Данные о вакансии не найдены</div>;
     }
+
+    const handleFeedbackClick = async () => {
+    if (!vacancyId) return;
+    
+    try {
+        setFeedbackLoading(true);
+        const user = await bridge.send('VKWebAppGetUserInfo');
+        const vkIdStudent = user.id;
+
+        if (hasFeedback) {
+            // Отмена отклика
+            const { error } = await supabase
+                .from('Feedback')
+                .delete()
+                .eq('id_vk_student', vkIdStudent)
+                .eq('id_card_vacancie', vacancyId);
+
+            if (!error) {
+                setHasFeedback(false);
+            }
+        } else {
+            // Создание отклика
+            const { data: vacancyData, error: vacancyError } = await supabase
+                .from('Vacancies')
+                .select('vk_id_employer, position')
+                .eq('id', vacancyId)
+                .single();
+
+            if (vacancyError || !vacancyData) {
+                throw new Error(vacancyError?.message || 'Vacancy not found');
+            }
+
+            // Добавляем запись в таблицу Notices
+            const { error: noticeError } = await supabase
+                .from('Notices')
+                .insert([
+                    {
+                        vk_id_student: vkIdStudent,
+                        vk_id_employer: vacancyData.vk_id_employer,
+                        id_card: vacancyId,
+                        reviewed: false
+                    }
+                ]);
+
+            if (noticeError) {
+                throw noticeError;
+            }
+
+            const { error: feedbackError } = await supabase
+                .from('Feedback')
+                .insert([
+                    {
+                        id_vk_student: vkIdStudent,
+                        id_vk_employear: vacancyData.vk_id_employer,
+                        id_card_vacancie: vacancyId,
+                        vacancies: vacancyData.position
+                    }
+                ]);
+
+            if (feedbackError) {
+                throw feedbackError;
+            }
+
+            setHasFeedback(true);
+        }
+    } catch (error) {
+        console.error('Error handling feedback:', error);
+    } finally {
+        setFeedbackLoading(false);
+    }
+};
 
     return (
         <Panel id={id}>
@@ -142,6 +228,19 @@ export const EmployerVacances: React.FC<NavIdProps> = ({id}) => {
                     </Div>
                 </Div>
             </Div>
+
+            <FixedLayout vertical="bottom">
+                <Button
+                    className='btnStudent' stretched 
+                    mode='secondary' size="l"  
+                    hoverClassName='btnStudentHover'
+                    disabled={feedbackLoading}
+                    loading={feedbackLoading}
+                    onClick={handleFeedbackClick}
+                >
+                    {hasFeedback ? 'Отменить отклик' : 'Откликнуться'}
+                </Button>
+            </FixedLayout>
         </Panel>
     )
 }

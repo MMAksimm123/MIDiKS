@@ -119,7 +119,7 @@ const NoticesStudent = () => {
           subtitle={`Приглашение на вакансию: ${notice.position || 'не указана'}`}
           style={{
             marginBottom: 12,
-            borderLeft: notice.reviewed ? '4px solid transparent' : '4px solid #3F8AE0',
+            borderLeft: notice.reviewed ? '4px solid transparent' : '4px solid #fc4c00',
             opacity: notice.reviewed ? 0.8 : 1
           }}
         />
