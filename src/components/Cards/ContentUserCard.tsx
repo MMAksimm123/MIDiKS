@@ -168,6 +168,55 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
         }
     };
 
+    const handleRemoveInviteClick = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onActionClick) onActionClick(e);
+        try {
+            setInviteStatus('loading');
+            const user = await bridge.send('VKWebAppGetUserInfo');
+            const vkEmployerId = user.id;
+
+            // Получаем данные студента
+            const { data: studentData, error: studentError } = await supabase
+            .from('Summary')
+            .select('vk_id_student')
+            .eq('id', id)
+            .single();
+
+            if (studentError || !studentData) {
+            throw studentError || new Error('Student not found');
+            }
+
+            // Удаляем приглашение
+            const { error: inviteError } = await supabase
+            .from('Invitations')
+            .delete()
+            .eq('id_vk_employear', vkEmployerId)
+            .eq('id_card', id);
+
+            if (inviteError) {
+            throw inviteError;
+            }
+
+            // Удаляем уведомление
+            const { error: noticeError } = await supabase
+            .from('Notices_Student')
+            .delete()
+            .eq('vk_id_student', studentData.vk_id_student)
+            .eq('vk_id_employer', vkEmployerId)
+            .eq('id_card', id);
+
+            if (noticeError) {
+            throw noticeError;
+            }
+
+            setInviteStatus('idle');
+        } catch (error) {
+            console.error('Error removing invitation:', error);
+            setInviteStatus('sent');
+        }
+    };
+
     return (
         <>
             <Title level="3">{vacancy}</Title>
@@ -181,22 +230,33 @@ const ContentUserCard: React.FC<StudentContentProp> = ({id, vacancy, workExperie
             <Spacing size="xl" />
 
             <ButtonGroup mode="horizontal" gap="m">
+            <Button 
+                mode="tertiary" 
+                onClick={handleFavoriteClick}
+                disabled={loading}
+            >
+                {isFavorite ? <Icon24Like fill="#fc4c00"/> : <Icon24LikeOutline fill="#fc4c00"/>}
+            </Button>
+            {inviteStatus === 'sent' ? (
                 <Button 
-                    mode="tertiary" 
-                    onClick={handleFavoriteClick}
-                    disabled={loading}
+                className='btnStudent' 
+                hoverClassName='btnStudentHover' 
+                mode="secondary"
+                onClick={handleRemoveInviteClick}
                 >
-                    {isFavorite ? <Icon24Like fill="#fc4c00"/> : <Icon24LikeOutline fill="#fc4c00"/>}
+                Отозвать приглашение
                 </Button>
+            ) : (
                 <Button 
-                    className='btnStudent' 
-                    hoverClassName='btnStudentHover' 
-                    mode="secondary"
-                    onClick={handleInviteClick}
-                    disabled={inviteStatus !== 'idle'}
+                className='btnStudent' 
+                hoverClassName='btnStudentHover' 
+                mode="secondary"
+                onClick={handleInviteClick}
+                disabled={inviteStatus !== 'idle'}
                 >
-                    {getInviteButtonText()}
+                {getInviteButtonText()}
                 </Button>
+            )}
             </ButtonGroup>
         </>
     );
